@@ -22,13 +22,7 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   boxes.forEach((box) => {
-    // // Draw black background behind the emoji
-    // ctx.fillStyle = "black";
-    // ctx.fillRect(box.x, box.y, box.width, box.height);
-
-    // Draw the emoji
     ctx.font = "48px serif";
-    ctx.fillStyle = "white"; // Change text color to white for better visibility
     ctx.fillText(box.emoji, box.x, box.y + box.height); // Adjust text position to center it vertically
   });
 }
@@ -55,15 +49,12 @@ function update() {
         box.y < otherBox.y + otherBox.height &&
         box.y + box.height > otherBox.y
       ) {
-        // Check rock-paper-scissors
         if (
           (box.emoji === "🪨" && otherBox.emoji === "✂️") ||
           (box.emoji === "📜" && otherBox.emoji === "🪨") ||
           (box.emoji === "✂️" && otherBox.emoji === "📜")
         ) {
-          // box wins
           otherBox.emoji = box.emoji;
-          // Adjust velocities to simulate bouncing off each other
           const tempDx = box.dx;
           box.dx = otherBox.dx;
           otherBox.dx = tempDx;
@@ -76,9 +67,7 @@ function update() {
           (otherBox.emoji === "📜" && box.emoji === "🪨") ||
           (otherBox.emoji === "✂️" && box.emoji === "📜")
         ) {
-          // otherBox wins
           box.emoji = otherBox.emoji;
-          // Adjust velocities to simulate bouncing off each other
           const tempDx = box.dx;
           box.dx = otherBox.dx;
           otherBox.dx = tempDx;
