@@ -10,7 +10,7 @@ window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas();
 
-const emojis = ["🪨", "📜", "✂️"];
+const emojis = ["🪨", "📜", "⚔️"];
 
 const boxes = [];
 
@@ -50,9 +50,9 @@ function update() {
         box.y + box.height > otherBox.y
       ) {
         if (
-          (box.emoji === "🪨" && otherBox.emoji === "✂️") ||
+          (box.emoji === "🪨" && otherBox.emoji === "⚔️") ||
           (box.emoji === "📜" && otherBox.emoji === "🪨") ||
-          (box.emoji === "✂️" && otherBox.emoji === "📜")
+          (box.emoji === "⚔️" && otherBox.emoji === "📜")
         ) {
           otherBox.emoji = box.emoji;
           const tempDx = box.dx;
@@ -63,9 +63,9 @@ function update() {
           box.dy = otherBox.dy;
           otherBox.dy = tempDy;
         } else if (
-          (otherBox.emoji === "🪨" && box.emoji === "✂️") ||
+          (otherBox.emoji === "🪨" && box.emoji === "⚔️") ||
           (otherBox.emoji === "📜" && box.emoji === "🪨") ||
-          (otherBox.emoji === "✂️" && box.emoji === "📜")
+          (otherBox.emoji === "⚔️" && box.emoji === "📜")
         ) {
           box.emoji = otherBox.emoji;
           const tempDx = box.dx;
