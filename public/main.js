@@ -4,6 +4,14 @@ const ctx = canvas.getContext("2d");
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+
+  // Any cubes that are outside the canvas will be reset to a random position
+  boxes.forEach((box) => {
+    if (box.x > canvas.width || box.y > canvas.height) {
+      box.x = Math.random() * (canvas.width - 50);
+      box.y = Math.random() * (canvas.height - 50);
+    }
+  });
 }
 
 window.addEventListener("resize", resizeCanvas);
@@ -14,9 +22,28 @@ const emojis = ["🪨", "📜", "✂️"];
 
 const boxes = [];
 
+let speed = 1;
+
 let boxesToSpawn = (canvas.width * canvas.height) / 5184;
 
+let autoRespawn = true;
+
 respawnCubes();
+
+// if someone clicks, respawn the cubes, also for right click
+canvas.addEventListener("click", respawnCubes);
+canvas.addEventListener("contextmenu", (event) => {
+  event.preventDefault();
+  respawnCubes();
+});
+// if someone clicks the middle mouse button, enable auto-respawn
+canvas.addEventListener("auxclick", (event) => {
+  if (event.button === 1) {
+    alert(`${autoRespawn?"Disabled":"Enabled"} auto refresh.`);
+    autoRespawn = !autoRespawn;
+  }
+});
+
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -47,42 +74,23 @@ function update() {
         box.x < otherBox.x + otherBox.width &&
         box.x + box.width > otherBox.x &&
         box.y < otherBox.y + otherBox.height &&
-        box.y + box.height > otherBox.y
-      ) {
-        if (
-          (box.emoji === "🪨" && otherBox.emoji === "✂️") ||
+        box.y + box.height > otherBox.y &&
+        ((box.emoji === "🪨" && otherBox.emoji === "✂️") ||
           (box.emoji === "📜" && otherBox.emoji === "🪨") ||
-          (box.emoji === "✂️" && otherBox.emoji === "📜")
-        ) {
-          otherBox.emoji = box.emoji;
-          const tempDx = box.dx;
-          box.dx = otherBox.dx;
-          otherBox.dx = tempDx;
+          (box.emoji === "✂️" && otherBox.emoji === "📜"))
+      ) {
+        otherBox.emoji = box.emoji;
+        const tempDx = box.dx;
+        box.dx = otherBox.dx;
+        otherBox.dx = tempDx;
 
-          const tempDy = box.dy;
-          box.dy = otherBox.dy;
-          otherBox.dy = tempDy;
-        } else if (
-          (otherBox.emoji === "🪨" && box.emoji === "✂️") ||
-          (otherBox.emoji === "📜" && box.emoji === "🪨") ||
-          (otherBox.emoji === "✂️" && box.emoji === "📜")
-        ) {
-          box.emoji = otherBox.emoji;
-          const tempDx = box.dx;
-          box.dx = otherBox.dx;
-          otherBox.dx = tempDx;
-
-          const tempDy = box.dy;
-          box.dy = otherBox.dy;
-          otherBox.dy = tempDy;
-        }
+        const tempDy = box.dy;
+        box.dy = otherBox.dy;
+        otherBox.dy = tempDy;
       }
     });
-
-    // Check if there is only one type left
-    const oneTypeLeft = checkIfOneTypeLeft();
-    if (oneTypeLeft) {
-      respawnCubes();
+    if (checkIfOneTypeLeft()) {
+      autoRespawn ? respawnCubes() : null;
     }
   });
 }
@@ -97,13 +105,13 @@ function respawnCubes() {
   for (let i = 0; i < boxesToSpawn; i++) {
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
     const box = {
-      x: Math.random() * (canvas.width - 50),
-      y: Math.random() * (canvas.height - 50),
-      width: 40,
-      height: 40,
-      dx: (Math.random() - 0.5) * 2,
-      dy: (Math.random() - 0.5) * 2,
-      emoji: emoji,
+      x: Math.random() * (canvas.width - 50), // Random position
+      y: Math.random() * (canvas.height - 50), // Random position
+      width: 40, // Fixed size
+      height: 40, // Fixed size
+      dx: (Math.random() - 0.5) * speed, // Random speed
+      dy: (Math.random() - 0.5) * speed, // Random speed
+      emoji: emoji, // Random emoji
     };
     boxes.push(box);
   }
