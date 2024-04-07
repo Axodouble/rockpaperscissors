@@ -9,9 +9,9 @@ const boxes = [];
 
 let speed = 1;
 
-let boxesToSpawn = (canvas.width * canvas.height) / 5184;
+let boxesToSpawn = (canvas.width * canvas.height) / 5184; // 5184 is the area of a 72x72 box, which is enough for 1 40x40 box
 
-let autoRespawn = false;
+let autoRespawn = true;
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
