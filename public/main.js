@@ -1,21 +1,6 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  // Any cubes that are outside the canvas will be reset to a random position
-  boxes.forEach((box) => {
-    if (box.x > canvas.width || box.y > canvas.height) {
-      box.x = Math.random() * (canvas.width - 50);
-      box.y = Math.random() * (canvas.height - 50);
-    }
-  });
-}
-
-window.addEventListener("resize", resizeCanvas);
-
 resizeCanvas();
 
 const emojis = ["🪨", "📜", "✂️"];
@@ -26,7 +11,15 @@ let speed = 1;
 
 let boxesToSpawn = (canvas.width * canvas.height) / 5184;
 
-let autoRespawn = true;
+let autoRespawn = false;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resizeCanvas);
+
 
 respawnCubes();
 
