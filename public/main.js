@@ -6,8 +6,8 @@ resizeCanvas();
 const emojis = ["🪨", "📜", "✂️"];
 const boxes = [];
 
-let speed = 1;
-let boxesToSpawn = (window.innerWidth * window.innerHeight) / 5184; // 5184 is the area of a 72x72 box, which is enough for 1 40x40 box
+let speed = 1.5; // Increase speed for chasing effect
+let boxesToSpawn = 10; // Reduce the number of boxes
 let autoRespawn = true;
 
 function resizeCanvas() {
@@ -16,7 +16,6 @@ function resizeCanvas() {
 }
 
 window.addEventListener("resize", resizeCanvas);
-
 
 respawnCubes();
 
@@ -29,11 +28,10 @@ canvas.addEventListener("contextmenu", (event) => {
 // if someone clicks the middle mouse button, enable auto-respawn
 canvas.addEventListener("auxclick", (event) => {
   if (event.button === 1) {
-    alert(`${autoRespawn?"Disabled":"Enabled"} auto refresh.`);
+    alert(`${autoRespawn ? "Disabled" : "Enabled"} auto refresh.`);
     autoRespawn = !autoRespawn;
   }
 });
-
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -46,6 +44,26 @@ function draw() {
 
 function update() {
   boxes.forEach((box) => {
+    // Find the target box to chase
+    let target = null;
+    boxes.forEach((otherBox) => {
+      if (
+        box !== otherBox &&
+        ((box.emoji === "🪨" && otherBox.emoji === "✂️") ||
+          (box.emoji === "📜" && otherBox.emoji === "🪨") ||
+          (box.emoji === "✂️" && otherBox.emoji === "📜"))
+      ) {
+        target = otherBox;
+      }
+    });
+
+    // Move towards the target
+    if (target) {
+      let angle = Math.atan2(target.y - box.y, target.x - box.x);
+      box.dx = Math.cos(angle) * speed;
+      box.dy = Math.sin(angle) * speed;
+    }
+
     box.x += box.dx;
     box.y += box.dy;
 
@@ -70,15 +88,9 @@ function update() {
           (box.emoji === "✂️" && otherBox.emoji === "📜"))
       ) {
         otherBox.emoji = box.emoji;
-        const tempDx = box.dx;
-        box.dx = otherBox.dx;
-        otherBox.dx = tempDx;
-
-        const tempDy = box.dy;
-        box.dy = otherBox.dy;
-        otherBox.dy = tempDy;
       }
     });
+
     if (checkIfOneTypeLeft()) {
       autoRespawn ? respawnCubes() : null;
     }
@@ -99,8 +111,8 @@ function respawnCubes() {
       y: Math.random() * (canvas.height - 50), // Random position
       width: 40, // Fixed size
       height: 40, // Fixed size
-      dx: (Math.random() - 0.5) * speed, // Random speed
-      dy: (Math.random() - 0.5) * speed, // Random speed
+      dx: 0, // Initialize speed to zero
+      dy: 0, // Initialize speed to zero
       emoji: emoji, // Random emoji
     };
     boxes.push(box);
